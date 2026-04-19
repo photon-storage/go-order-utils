@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/polymarket/go-order-utils/pkg/eip712"
-	"github.com/polymarket/go-order-utils/pkg/model"
-	"github.com/polymarket/go-order-utils/pkg/signer"
-	"github.com/polymarket/go-order-utils/pkg/utils"
+	"github.com/photon-storage/go-order-utils/pkg/eip712"
+	"github.com/photon-storage/go-order-utils/pkg/model"
+	"github.com/photon-storage/go-order-utils/pkg/signer"
+	"github.com/photon-storage/go-order-utils/pkg/utils"
 )
 
 type ExchangeOrderBuilderImpl struct {
