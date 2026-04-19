@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"fmt"
 	"math/big"
+	"time"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/polymarket/go-order-utils/pkg/eip712"
@@ -95,37 +96,23 @@ func (e *ExchangeOrderBuilderImpl) BuildOrder(orderData *model.OrderData) (*mode
 		return nil, fmt.Errorf("can't parse TakerAmount: %s as valid *big.Int", orderData.TakerAmount)
 	}
 
-	var expiration *big.Int
-	if orderData.Expiration == "" {
-		orderData.Expiration = "0"
-	}
-	if expiration, ok = new(big.Int).SetString(orderData.Expiration, 10); !ok {
-		return nil, fmt.Errorf("can't parse Expiration: %s as valid *big.Int", orderData.Expiration)
-	}
-
-	var nonce *big.Int
-	if nonce, ok = new(big.Int).SetString(orderData.Nonce, 10); !ok {
-		return nil, fmt.Errorf("can't parse Nonce: %s as valid *big.Int", orderData.Nonce)
-	}
-
-	var feeRateBps *big.Int
-	if feeRateBps, ok = new(big.Int).SetString(orderData.FeeRateBps, 10); !ok {
-		return nil, fmt.Errorf("can't parse FeeRateBps: %s as valid *big.Int", orderData.FeeRateBps)
+	ts := orderData.Timestamp
+	if ts == 0 {
+		ts = time.Now().UnixMilli()
 	}
 
 	return &model.Order{
 		Salt:          new(big.Int).SetInt64(e.saltGenerator()),
 		Maker:         common.HexToAddress(orderData.Maker),
-		Taker:         common.HexToAddress(orderData.Taker),
 		Signer:        signer,
 		TokenId:       tokenId,
 		MakerAmount:   makerAmount,
 		TakerAmount:   takerAmount,
 		Side:          new(big.Int).SetInt64(int64(orderData.Side)),
-		Expiration:    expiration,
-		Nonce:         nonce,
-		FeeRateBps:    feeRateBps,
 		SignatureType: new(big.Int).SetInt64(int64(orderData.SignatureType)),
+		Timestamp:     new(big.Int).SetInt64(ts),
+		Metadata:      orderData.Metadata,
+		Builder:       orderData.Builder,
 	}, nil
 }
 
@@ -150,15 +137,14 @@ func (e *ExchangeOrderBuilderImpl) BuildOrderHash(order *model.Order, contract m
 		order.Salt,
 		order.Maker,
 		order.Signer,
-		order.Taker,
 		order.TokenId,
 		order.MakerAmount,
 		order.TakerAmount,
-		order.Expiration,
-		order.Nonce,
-		order.FeeRateBps,
 		uint8(order.Side.Uint64()),
 		uint8(order.SignatureType.Uint64()),
+		order.Timestamp,
+		order.Metadata,
+		order.Builder,
 	}
 	orderHash, err := eip712.HashTypedDataV4(domainSeparator, _ORDER_STRUCTURE, values)
 	if err != nil {

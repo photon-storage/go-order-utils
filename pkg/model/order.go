@@ -14,9 +14,6 @@ type OrderData struct {
 	// Maker of the order, i.e the source of funds for the order
 	Maker string
 
-	// Address of the order taker. The zero address is used to indicate a public order
-	Taker string
-
 	// Token Id of the CTF ERC1155 asset to be bought or sold.
 	// If BUY, this is the tokenId of the asset to be bought, i.e the makerAssetId
 	// If SELL, this is the tokenId of the asset to be sold, i.e the  takerAssetId
@@ -28,24 +25,23 @@ type OrderData struct {
 	// Taker amount, i.e the minimum amount of tokens to be received
 	TakerAmount string
 
-	// Fee rate, in basis points, charged to the order maker, charged on proceeds
-	FeeRateBps string
-
-	// Nonce used for onchain cancellations
-	Nonce string
-
 	// Signer of the order. Optional, if it is not present the signer is the maker of the order.
 	Signer string
-
-	// Timestamp after which the order is expired.
-	// Optional, if it is not present the value is '0' (no expiration)
-	Expiration string
 
 	// The side of the order, BUY or SELL
 	Side Side
 
 	// Signature type used by the Order. Default value 'EOA'
 	SignatureType SignatureType
+
+	// Order creation time, unix milliseconds.
+	Timestamp int64
+
+	// Arbitrary bytes32 metadata attached to the order.
+	Metadata common.Hash
+
+	// Builder code (bytes32) used for builder attribution.
+	Builder common.Hash
 }
 
 type Order struct {
@@ -66,26 +62,18 @@ type Order struct {
 	// The side of the order, BUY or SELL
 	Side *big.Int
 
-	// Timestamp after which the order is expired
-	Expiration *big.Int
-
-	// Nonce used for onchain cancellations
-	Nonce *big.Int
-
-	// Fee rate, in basis points, charged to the order maker, charged on proceeds
-	FeeRateBps *big.Int
-
 	// Signature type used by the Order
 	SignatureType *big.Int
 
 	// Maker of the order, i.e the source of funds for the order
 	Maker common.Address
 
-	// Address of the order taker. The zero address is used to indicate a public order
-	Taker common.Address
-
 	// Signer of the order
 	Signer common.Address
+
+	Timestamp *big.Int
+	Metadata  common.Hash
+	Builder   common.Hash
 }
 
 type SignedOrder struct {
