@@ -11,4 +11,6 @@ const (
 
 	// EIP712 signatures signed by EOAs that own Polymarket Gnosis safes
 	POLY_GNOSIS_SAFE
+
+	POLY_DEPOSIT_WALLET
 )
