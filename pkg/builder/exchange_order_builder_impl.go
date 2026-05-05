@@ -127,13 +127,13 @@ func (e *ExchangeOrderBuilderImpl) BuildOrderHash(order *model.Order, contract m
 		return model.OrderHash{}, err
 	}
 
-	domainSeparator, err := eip712.BuildEIP712DomainSeparator(_PROTOCOL_NAME, _PROTOCOL_VERSION, e.chainId, verifyingContract)
+	domainSeparator, err := eip712.BuildEIP712DomainSeparator(PROTOCOL_NAME, PROTOCOL_VERSION, e.chainId, verifyingContract)
 	if err != nil {
 		return model.OrderHash{}, err
 	}
 
 	values := []interface{}{
-		_ORDER_STRUCTURE_HASH,
+		ORDER_STRUCTURE_HASH,
 		order.Salt,
 		order.Maker,
 		order.Signer,
@@ -146,7 +146,7 @@ func (e *ExchangeOrderBuilderImpl) BuildOrderHash(order *model.Order, contract m
 		order.Metadata,
 		order.Builder,
 	}
-	orderHash, err := eip712.HashTypedDataV4(domainSeparator, _ORDER_STRUCTURE, values)
+	orderHash, err := eip712.HashTypedDataV4(domainSeparator, ORDER_STRUCTURE, values)
 	if err != nil {
 		return model.OrderHash{}, err
 	}
