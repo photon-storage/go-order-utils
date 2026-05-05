@@ -29,7 +29,6 @@ var (
 )
 
 var (
-	ORDER_STRUCTURE_HASH = crypto.Keccak256Hash(
-		[]byte("Order(uint256 salt,address maker,address signer,uint256 tokenId,uint256 makerAmount,uint256 takerAmount,uint8 side,uint8 signatureType,uint256 timestamp,bytes32 metadata,bytes32 builder)"),
-	)
+	OrderContentsType    = []byte("Order(uint256 salt,address maker,address signer,uint256 tokenId,uint256 makerAmount,uint256 takerAmount,uint8 side,uint8 signatureType,uint256 timestamp,bytes32 metadata,bytes32 builder)")
+	ORDER_STRUCTURE_HASH = crypto.Keccak256Hash(OrderContentsType)
 )
