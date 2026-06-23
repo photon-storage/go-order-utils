@@ -29,7 +29,7 @@ type ExchangeOrderBuilder interface {
 	// @param Order
 	//
 	// @returns a OrderHash that is a 'common.Hash'
-	BuildOrderHash(order *model.Order, contract model.VerifyingContract) (model.OrderHash, error)
+	BuildOrderHash(order *model.Order, contract model.VerifyingContract) ([]byte, model.OrderHash, error)
 
 	// signs an order
 	//

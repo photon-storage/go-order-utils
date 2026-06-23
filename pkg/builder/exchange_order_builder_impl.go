@@ -43,7 +43,7 @@ func (e *ExchangeOrderBuilderImpl) BuildSignedOrder(privateKey *ecdsa.PrivateKey
 		return nil, err
 	}
 
-	orderHash, err := e.BuildOrderHash(order, contract)
+	_, orderHash, err := e.BuildOrderHash(order, contract)
 	if err != nil {
 		return nil, err
 	}
@@ -121,15 +121,15 @@ func (e *ExchangeOrderBuilderImpl) BuildOrder(orderData *model.OrderData) (*mode
 // @param Order
 //
 // @returns a OrderHash that is a 'common.Hash'
-func (e *ExchangeOrderBuilderImpl) BuildOrderHash(order *model.Order, contract model.VerifyingContract) (model.OrderHash, error) {
+func (e *ExchangeOrderBuilderImpl) BuildOrderHash(order *model.Order, contract model.VerifyingContract) ([]byte, model.OrderHash, error) {
 	verifyingContract, err := utils.GetVerifyingContractAddress(e.chainId, contract)
 	if err != nil {
-		return model.OrderHash{}, err
+		return nil, model.OrderHash{}, err
 	}
 
 	domainSeparator, err := eip712.BuildEIP712DomainSeparator(PROTOCOL_NAME, PROTOCOL_VERSION, e.chainId, verifyingContract)
 	if err != nil {
-		return model.OrderHash{}, err
+		return nil, model.OrderHash{}, err
 	}
 
 	values := []interface{}{
@@ -146,12 +146,12 @@ func (e *ExchangeOrderBuilderImpl) BuildOrderHash(order *model.Order, contract m
 		order.Metadata,
 		order.Builder,
 	}
-	orderHash, err := eip712.HashTypedDataV4(domainSeparator, ORDER_STRUCTURE, values)
+	encoded, orderHash, err := eip712.HashTypedDataV4(domainSeparator, ORDER_STRUCTURE, values)
 	if err != nil {
-		return model.OrderHash{}, err
+		return nil, model.OrderHash{}, err
 	}
 
-	return orderHash, nil
+	return encoded, orderHash, nil
 }
 
 // signs an order

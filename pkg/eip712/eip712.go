@@ -42,12 +42,12 @@ func BuildEIP712DomainSeparatorNoContract(name, version common.Hash, chainId *bi
 	return crypto.Keccak256Hash(encodedDomainSeparator), nil
 }
 
-func HashTypedDataV4(domainSeparator common.Hash, args []abi.Type, values []interface{}) (common.Hash, error) {
+func HashTypedDataV4(domainSeparator common.Hash, args []abi.Type, values []interface{}) ([]byte, common.Hash, error) {
 	encoded, err := Encode(args, values)
 	if err != nil {
-		return common.Hash{}, err
+		return nil, common.Hash{}, err
 	}
 
 	rawData := []byte(fmt.Sprintf("\x19\x01%s%s", string(domainSeparator[:]), string(crypto.Keccak256Hash(encoded).Bytes())))
-	return crypto.Keccak256Hash(rawData), nil
+	return encoded, crypto.Keccak256Hash(rawData), nil
 }
