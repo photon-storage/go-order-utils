@@ -77,7 +77,7 @@ func TestHashTypedDataV4(t *testing.T) {
 		big.NewInt(1),
 	}
 
-	dataHashBytes, err := HashTypedDataV4(domainSeparator, types, values)
+	_, dataHashBytes, err := HashTypedDataV4(domainSeparator, types, values)
 	assert.NoError(t, err)
 	assert.NotEmpty(t, dataHashBytes)
 
